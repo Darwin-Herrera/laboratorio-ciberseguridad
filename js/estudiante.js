@@ -4,32 +4,51 @@ import {
   SESSION_SLUG
 } from './config.js';
 
-const formulario = document.querySelector('#formRegistro');
-const mensaje = document.querySelector('#mensaje');
-const contenido = document.querySelector('#contenido');
+
+const formulario =
+  document.querySelector('#formRegistro');
+
+const mensaje =
+  document.querySelector('#mensaje');
+
+const contenido =
+  document.querySelector('#contenido');
+
 
 const headers = {
+
   'apikey': SUPABASE_ANON_KEY,
-  'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-  'Content-Type': 'application/json'
+
+  'Authorization':
+    `Bearer ${SUPABASE_ANON_KEY}`,
+
+  'Content-Type':
+    'application/json'
 };
 
+
 /* =========================================================
-   MOSTRAR MENSAJES
+   MENSAJES
 ========================================================= */
 
-function mostrarMensaje(texto, tipo = 'error') {
+function mostrarMensaje(
+  texto,
+  tipo = 'error'
+) {
+
   if (!mensaje) return;
 
   mensaje.textContent = texto;
-  mensaje.className = texto
-    ? `mensaje ${tipo}`
-    : 'mensaje';
+
+  mensaje.className =
+    texto
+      ? `mensaje ${tipo}`
+      : 'mensaje';
 }
 
 
 /* =========================================================
-   OBTENER SESIÓN ACTUAL
+   OBTENER SESIÓN
 ========================================================= */
 
 async function obtenerSesion() {
@@ -37,16 +56,24 @@ async function obtenerSesion() {
   const url =
     `${SUPABASE_URL}/rest/v1/sesiones` +
     `?slug=eq.${encodeURIComponent(SESSION_SLUG)}` +
-    `&select=id,nombre,activa`;
+    `&select=id,nombre,activa` +
+    `&limit=1`;
 
-  const response = await fetch(url, {
-    method: 'GET',
-    headers
-  });
+
+  const response =
+    await fetch(
+      url,
+      {
+        method: 'GET',
+        headers
+      }
+    );
+
 
   if (!response.ok) {
 
-    const texto = await response.text();
+    const texto =
+      await response.text();
 
     throw new Error(
       texto ||
@@ -54,43 +81,86 @@ async function obtenerSesion() {
     );
   }
 
-  const data = await response.json();
 
-  if (!data || data.length === 0) {
+  const data =
+    await response.json();
+
+
+  if (
+    !data ||
+    data.length === 0
+  ) {
+
     throw new Error(
       'No se encontró la sesión configurada.'
     );
   }
+
 
   return data[0];
 }
 
 
 /* =========================================================
-   MOSTRAR SESIÓN FINALIZADA
+   SESIÓN FINALIZADA
 ========================================================= */
 
 function mostrarSesionFinalizada() {
 
   if (!contenido) return;
 
+
   contenido.innerHTML = `
+
     <div class="estado-final">
 
-      <div class="estado-icono">
-        ✓
-      </div>
+        <div class="estado-icono">
+            ✓
+        </div>
 
-      <h1>
-        Actividad finalizada
-      </h1>
+        <h1>
+            Actividad finalizada
+        </h1>
 
-      <p>
-        La sesión ya no está recibiendo registros.
-        Espera las indicaciones del docente.
-      </p>
+        <p>
+            La sesión ya no está recibiendo registros.
+            Espera las indicaciones del docente.
+        </p>
 
     </div>
+
+  `;
+}
+
+
+/* =========================================================
+   REGISTRO EXITOSO
+========================================================= */
+
+function mostrarRegistroExitoso() {
+
+  if (!contenido) return;
+
+
+  contenido.innerHTML = `
+
+    <div class="estado-final">
+
+        <div class="estado-icono">
+            ✓
+        </div>
+
+        <h1>
+            Participación registrada
+        </h1>
+
+        <p>
+            Tu registro fue recibido correctamente.
+            Espera las indicaciones del docente.
+        </p>
+
+    </div>
+
   `;
 }
 
@@ -103,25 +173,28 @@ async function registrarParticipacion(event) {
 
   event.preventDefault();
 
+
   mostrarMensaje('');
+
 
   const boton =
     formulario.querySelector(
       'button[type="submit"]'
     );
 
+
   const campoCodigo =
     document.querySelector('#codigo');
+
 
   const campoCarrera =
     document.querySelector('#carrera');
 
 
-  /* ---------------------------------------------------------
-     VALIDAR ELEMENTOS
-  --------------------------------------------------------- */
-
-  if (!campoCodigo || !campoCarrera) {
+  if (
+    !campoCodigo ||
+    !campoCarrera
+  ) {
 
     mostrarMensaje(
       'No fue posible cargar correctamente el formulario.'
@@ -131,22 +204,16 @@ async function registrarParticipacion(event) {
   }
 
 
-  /* ---------------------------------------------------------
-     OBTENER DATOS
-  --------------------------------------------------------- */
-
   const codigo =
-    campoCodigo.value
+    campoCodigo
+      .value
       .trim()
       .toUpperCase();
+
 
   const carrera =
     campoCarrera.value;
 
-
-  /* ---------------------------------------------------------
-     VALIDACIONES
-  --------------------------------------------------------- */
 
   if (!codigo) {
 
@@ -172,23 +239,15 @@ async function registrarParticipacion(event) {
   }
 
 
-  /* ---------------------------------------------------------
-     BLOQUEAR BOTÓN MIENTRAS GUARDA
-  --------------------------------------------------------- */
+  boton.disabled = true;
 
-  if (boton) {
-
-    boton.disabled = true;
-    boton.textContent = 'Registrando...';
-
-  }
+  boton.textContent =
+    'Registrando...';
 
 
   try {
 
-    /* =====================================================
-       1. COMPROBAR QUE LA SESIÓN SIGUE ACTIVA
-    ===================================================== */
+    /* COMPROBAR SESIÓN */
 
     const sesion =
       await obtenerSesion();
@@ -202,65 +261,48 @@ async function registrarParticipacion(event) {
     }
 
 
-    /* =====================================================
-       2. INSERTAR PARTICIPACIÓN
-    ===================================================== */
+    /* INSERTAR */
 
-    const response = await fetch(
-      `${SUPABASE_URL}/rest/v1/respuestas`,
-      {
+    const response =
+      await fetch(
+        `${SUPABASE_URL}/rest/v1/respuestas`,
+        {
 
-        method: 'POST',
+          method: 'POST',
 
-        headers: {
+          headers: {
 
-          ...headers,
+            ...headers,
 
-          /*
-            IMPORTANTE:
+            'Prefer':
+              'return=minimal'
+          },
 
-            Supabase no necesita devolver la fila insertada.
+          body:
+            JSON.stringify({
 
-            Con return=minimal obtenemos una respuesta
-            exitosa sin cuerpo JSON.
+              sesion_id:
+                sesion.id,
 
-            Por eso NO ejecutamos response.json()
-            después del INSERT.
-          */
+              codigo:
+                codigo,
 
-          'Prefer': 'return=minimal'
-        },
+              carrera:
+                carrera
+            })
+        }
+      );
 
-        body: JSON.stringify({
-
-          sesion_id: sesion.id,
-
-          codigo: codigo,
-
-          carrera: carrera
-
-        })
-      }
-    );
-
-
-    /* =====================================================
-       3. COMPROBAR RESPUESTA
-    ===================================================== */
 
     if (!response.ok) {
 
       const texto =
         await response.text();
 
+
       let detalle =
         `No fue posible registrar la participación (${response.status}).`;
 
-
-      /*
-        Si Supabase devuelve información adicional
-        intentamos mostrar un mensaje útil.
-      */
 
       if (texto) {
 
@@ -268,6 +310,7 @@ async function registrarParticipacion(event) {
 
           const errorJson =
             JSON.parse(texto);
+
 
           detalle =
             errorJson.message ||
@@ -284,46 +327,17 @@ async function registrarParticipacion(event) {
       }
 
 
-      console.error(
-        'Error Supabase:',
-        response.status,
-        texto
-      );
-
-
       throw new Error(detalle);
     }
 
 
-    /* =====================================================
-       4. REGISTRO CORRECTO
-    ===================================================== */
+    /* TODO CORRECTO */
 
-    if (contenido) {
-
-      contenido.innerHTML = `
-        <div class="estado-final">
-
-          <div class="estado-icono">
-            ✓
-          </div>
-
-          <h1>
-            Participación registrada
-          </h1>
-
-          <p>
-            Tu registro fue recibido correctamente.
-            Espera las indicaciones del docente.
-          </p>
-
-        </div>
-      `;
-    }
+    mostrarRegistroExitoso();
 
 
     console.log(
-      'Participación registrada correctamente:',
+      'Participación registrada:',
       {
         codigo,
         carrera,
@@ -336,7 +350,7 @@ async function registrarParticipacion(event) {
   catch (error) {
 
     console.error(
-      'Error al registrar participación:',
+      'Error al registrar:',
       error
     );
 
@@ -349,14 +363,6 @@ async function registrarParticipacion(event) {
   }
 
   finally {
-
-    /*
-      Si el formulario continúa visible,
-      habilitamos nuevamente el botón.
-
-      Si el registro fue correcto, el contenido
-      ya fue reemplazado por la confirmación.
-    */
 
     if (
       boton &&
@@ -373,7 +379,7 @@ async function registrarParticipacion(event) {
 
 
 /* =========================================================
-   INICIAR APLICACIÓN
+   INICIO
 ========================================================= */
 
 async function iniciar() {
@@ -384,10 +390,6 @@ async function iniciar() {
       await obtenerSesion();
 
 
-    /* -------------------------------------------------------
-       SESIÓN CERRADA
-    ------------------------------------------------------- */
-
     if (!sesion.activa) {
 
       mostrarSesionFinalizada();
@@ -396,14 +398,10 @@ async function iniciar() {
     }
 
 
-    /* -------------------------------------------------------
-       SESIÓN ACTIVA
-    ------------------------------------------------------- */
-
     if (!formulario) {
 
       throw new Error(
-        'No se encontró el formulario de registro.'
+        'No se encontró el formulario.'
       );
     }
 
@@ -418,7 +416,7 @@ async function iniciar() {
   catch (error) {
 
     console.error(
-      'Error al iniciar la actividad:',
+      'Error iniciando actividad:',
       error
     );
 
@@ -429,9 +427,5 @@ async function iniciar() {
   }
 }
 
-
-/* =========================================================
-   EJECUTAR
-========================================================= */
 
 iniciar();

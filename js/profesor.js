@@ -6,29 +6,48 @@ import {
 
 
 /* =========================================================
-   ELEMENTOS DEL PANEL
+   ELEMENTOS
 ========================================================= */
 
-const estado = document.querySelector('#estado');
-const total = document.querySelector('#total');
-const actualizacion = document.querySelector('#actualizacion');
-const carreras = document.querySelector('#carreras');
-const filas = document.querySelector('#filas');
+const estado =
+  document.querySelector('#estado');
 
-const btnActualizar = document.querySelector('#actualizar');
-const btnReiniciar = document.querySelector('#btnReiniciar');
+const total =
+  document.querySelector('#total');
 
-const mensajePanel = document.querySelector('#mensajePanel');
+const actualizacion =
+  document.querySelector('#actualizacion');
+
+const carreras =
+  document.querySelector('#carreras');
+
+const filas =
+  document.querySelector('#filas');
+
+const btnActualizar =
+  document.querySelector('#actualizar');
+
+const btnReiniciar =
+  document.querySelector('#btnReiniciar');
+
+const mensajePanel =
+  document.querySelector('#mensajePanel');
 
 
 /* =========================================================
-   HEADERS SUPABASE
+   HEADERS
 ========================================================= */
 
 const headers = {
-  'apikey': SUPABASE_ANON_KEY,
-  'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-  'Content-Type': 'application/json'
+
+  'apikey':
+    SUPABASE_ANON_KEY,
+
+  'Authorization':
+    `Bearer ${SUPABASE_ANON_KEY}`,
+
+  'Content-Type':
+    'application/json'
 };
 
 
@@ -36,11 +55,17 @@ const headers = {
    MENSAJES
 ========================================================= */
 
-function mostrarMensajePanel(texto, tipo = 'ok') {
+function mostrarMensajePanel(
+  texto,
+  tipo = 'ok'
+) {
 
   if (!mensajePanel) return;
 
-  mensajePanel.textContent = texto;
+
+  mensajePanel.textContent =
+    texto;
+
 
   mensajePanel.className =
     texto
@@ -61,14 +86,22 @@ async function obtenerSesion() {
     `&select=id,nombre,activa` +
     `&limit=1`;
 
-  const response = await fetch(url, {
-    method: 'GET',
-    headers
-  });
+
+  const response =
+    await fetch(
+      url,
+      {
+        method: 'GET',
+        headers
+      }
+    );
+
 
   if (!response.ok) {
 
-    const texto = await response.text();
+    const texto =
+      await response.text();
+
 
     throw new Error(
       texto ||
@@ -76,11 +109,21 @@ async function obtenerSesion() {
     );
   }
 
-  const data = await response.json();
 
-  if (!data || data.length === 0) {
-    throw new Error('No se encontró la sesión.');
+  const data =
+    await response.json();
+
+
+  if (
+    !data ||
+    data.length === 0
+  ) {
+
+    throw new Error(
+      'No se encontró la sesión.'
+    );
   }
+
 
   return data[0];
 }
@@ -90,7 +133,9 @@ async function obtenerSesion() {
    OBTENER RESPUESTAS
 ========================================================= */
 
-async function obtenerRespuestas(sesionId) {
+async function obtenerRespuestas(
+  sesionId
+) {
 
   const url =
     `${SUPABASE_URL}/rest/v1/respuestas` +
@@ -98,14 +143,22 @@ async function obtenerRespuestas(sesionId) {
     `&select=id,codigo,carrera,created_at` +
     `&order=created_at.desc`;
 
-  const response = await fetch(url, {
-    method: 'GET',
-    headers
-  });
+
+  const response =
+    await fetch(
+      url,
+      {
+        method: 'GET',
+        headers
+      }
+    );
+
 
   if (!response.ok) {
 
-    const texto = await response.text();
+    const texto =
+      await response.text();
+
 
     throw new Error(
       texto ||
@@ -113,47 +166,102 @@ async function obtenerRespuestas(sesionId) {
     );
   }
 
+
   return await response.json();
 }
 
 
 /* =========================================================
-   MOSTRAR ESTADO
+   ESTADO
 ========================================================= */
 
-function pintarEstado(sesion) {
+function pintarEstado(
+  sesion
+) {
 
   if (!estado) return;
 
+
   if (sesion.activa) {
 
-    estado.textContent = '● ACTIVA';
-    estado.className = 'estado-activo';
+    estado.textContent =
+      '● ACTIVA';
 
-  } else {
+    estado.className =
+      'estado-activo';
 
-    estado.textContent = '● CERRADA';
-    estado.className = 'estado-cerrado';
+  }
+
+  else {
+
+    estado.textContent =
+      '● CERRADA';
+
+    estado.className =
+      'estado-cerrado';
   }
 }
 
 
 /* =========================================================
-   PARTICIPACIÓN POR CARRERA
+   ESCAPAR HTML
 ========================================================= */
 
-function pintarCarreras(respuestas) {
+function escaparHTML(valor) {
+
+  return String(valor ?? '')
+
+    .replaceAll(
+      '&',
+      '&amp;'
+    )
+
+    .replaceAll(
+      '<',
+      '&lt;'
+    )
+
+    .replaceAll(
+      '>',
+      '&gt;'
+    )
+
+    .replaceAll(
+      '"',
+      '&quot;'
+    )
+
+    .replaceAll(
+      "'",
+      '&#039;'
+    );
+}
+
+
+/* =========================================================
+   CARRERAS
+========================================================= */
+
+function pintarCarreras(
+  respuestas
+) {
 
   if (!carreras) return;
 
+
   carreras.innerHTML = '';
+
 
   if (!respuestas.length) {
 
     carreras.innerHTML = `
+
       <div class="sin-registros">
+
         Aún no hay participaciones registradas.
+
       </div>
+
     `;
 
     return;
@@ -162,70 +270,98 @@ function pintarCarreras(respuestas) {
 
   const conteo = {};
 
-  respuestas.forEach(registro => {
 
-    const nombre =
-      registro.carrera || 'Sin especificar';
+  respuestas.forEach(
+    registro => {
 
-    conteo[nombre] =
-      (conteo[nombre] || 0) + 1;
-  });
+      const nombre =
+        registro.carrera ||
+        'Sin especificar';
 
 
-  const datos = Object.entries(conteo)
-    .sort((a, b) => b[1] - a[1]);
+      conteo[nombre] =
+        (conteo[nombre] || 0) + 1;
+    }
+  );
+
+
+  const datos =
+    Object.entries(conteo)
+      .sort(
+        (a, b) =>
+          b[1] - a[1]
+      );
 
 
   const maximo =
-    Math.max(...datos.map(item => item[1]));
+    Math.max(
+      ...datos.map(
+        item => item[1]
+      )
+    );
 
 
-  datos.forEach(([nombre, cantidad]) => {
+  datos.forEach(
+    ([nombre, cantidad]) => {
 
-    const porcentaje =
-      maximo > 0
-        ? (cantidad / maximo) * 100
-        : 0;
-
-
-    const fila = document.createElement('div');
-
-    fila.className = 'bar-row';
+      const porcentaje =
+        maximo > 0
+          ? (cantidad / maximo) * 100
+          : 0;
 
 
-    fila.innerHTML = `
-
-      <strong class="bar-label">
-        ${escaparHTML(nombre)}
-      </strong>
-
-      <div class="bar-track">
-
-        <div
-          class="bar-fill"
-          style="width:${porcentaje}%"
-        ></div>
-
-      </div>
-
-      <span class="bar-value">
-        ${cantidad}
-      </span>
-    `;
+      const fila =
+        document.createElement('div');
 
 
-    carreras.appendChild(fila);
-  });
+      fila.className =
+        'bar-row';
+
+
+      fila.innerHTML = `
+
+        <strong class="bar-label">
+
+          ${escaparHTML(nombre)}
+
+        </strong>
+
+
+        <div class="bar-track">
+
+          <div
+            class="bar-fill"
+            style="width:${porcentaje}%"
+          ></div>
+
+        </div>
+
+
+        <span class="bar-value">
+
+          ${cantidad}
+
+        </span>
+
+      `;
+
+
+      carreras.appendChild(fila);
+    }
+  );
 }
 
 
 /* =========================================================
-   TABLA DE REGISTROS
+   REGISTROS
 ========================================================= */
 
-function pintarRegistros(respuestas) {
+function pintarRegistros(
+  respuestas
+) {
 
   if (!filas) return;
+
 
   filas.innerHTML = '';
 
@@ -236,76 +372,73 @@ function pintarRegistros(respuestas) {
 
       <tr>
 
-        <td colspan="3" class="sin-registros">
-          No existen registros en esta sesión.
+        <td
+          colspan="3"
+          class="sin-registros"
+        >
+
+          No existen registros
+          en esta sesión.
+
         </td>
 
       </tr>
+
     `;
 
     return;
   }
 
 
-  respuestas.forEach(registro => {
+  respuestas.forEach(
+    registro => {
 
-    const tr =
-      document.createElement('tr');
-
-
-    const fecha =
-      new Date(registro.created_at);
+      const tr =
+        document.createElement('tr');
 
 
-    const hora =
-      fecha.toLocaleTimeString(
-        'es-HN',
-        {
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit'
-        }
-      );
+      const fecha =
+        new Date(
+          registro.created_at
+        );
 
 
-    tr.innerHTML = `
-
-      <td>
-        ${escaparHTML(registro.codigo)}
-      </td>
-
-      <td>
-        ${escaparHTML(registro.carrera)}
-      </td>
-
-      <td>
-        ${hora}
-      </td>
-    `;
+      const hora =
+        fecha.toLocaleTimeString(
+          'es-HN',
+          {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+          }
+        );
 
 
-    filas.appendChild(tr);
-  });
+      tr.innerHTML = `
+
+        <td>
+          ${escaparHTML(registro.codigo)}
+        </td>
+
+        <td>
+          ${escaparHTML(registro.carrera)}
+        </td>
+
+        <td>
+          ${hora}
+        </td>
+
+      `;
+
+
+      filas.appendChild(tr);
+    }
+  );
 }
 
 
 /* =========================================================
-   SEGURIDAD BÁSICA PARA TEXTO
-========================================================= */
-
-function escaparHTML(valor) {
-
-  return String(valor ?? '')
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#039;');
-}
-
-
-/* =========================================================
-   CARGAR TODO EL PANEL
+   CARGAR PANEL
 ========================================================= */
 
 async function cargarDatos() {
@@ -332,34 +465,47 @@ async function cargarDatos() {
 
 
     const respuestas =
-      await obtenerRespuestas(sesion.id);
+      await obtenerRespuestas(
+        sesion.id
+      );
 
 
     if (total) {
+
       total.textContent =
         respuestas.length;
     }
 
 
-    pintarCarreras(respuestas);
+    pintarCarreras(
+      respuestas
+    );
 
-    pintarRegistros(respuestas);
+
+    pintarRegistros(
+      respuestas
+    );
 
 
     if (actualizacion) {
 
       actualizacion.textContent =
-        new Date().toLocaleTimeString(
-          'es-HN',
-          {
-            hour: '2-digit',
-            minute: '2-digit'
-          }
-        );
+        new Date()
+          .toLocaleTimeString(
+            'es-HN',
+            {
+              hour:
+                '2-digit',
+
+              minute:
+                '2-digit'
+            }
+          );
     }
 
+  }
 
-  } catch (error) {
+  catch (error) {
 
     console.error(
       'Error cargando panel:',
@@ -373,7 +519,9 @@ async function cargarDatos() {
       'error'
     );
 
-  } finally {
+  }
+
+  finally {
 
     if (btnActualizar) {
 
@@ -392,12 +540,17 @@ async function cargarDatos() {
 
 async function reiniciarPractica() {
 
-  const confirmar = window.confirm(
-    '¿Deseas reiniciar la práctica?\n\n' +
-    'Se eliminarán TODOS los registros de participación ' +
-    'de esta sesión.\n\n' +
-    'Esta acción no se puede deshacer.'
-  );
+  const confirmar =
+    window.confirm(
+
+      '¿Deseas reiniciar la práctica?\n\n' +
+
+      'Se eliminarán TODOS los registros ' +
+
+      'de participación de esta sesión.\n\n' +
+
+      'Esta acción no se puede deshacer.'
+    );
 
 
   if (!confirmar) return;
@@ -408,41 +561,37 @@ async function reiniciarPractica() {
     mostrarMensajePanel('');
 
 
-    if (btnReiniciar) {
+    btnReiniciar.disabled = true;
 
-      btnReiniciar.disabled = true;
-
-      btnReiniciar.textContent =
-        'Reiniciando...';
-    }
+    btnReiniciar.textContent =
+      'Reiniciando...';
 
 
-    const response = await fetch(
-      `${SUPABASE_URL}/rest/v1/rpc/reiniciar_simulacion`,
-      {
+    const response =
+      await fetch(
 
-        method: 'POST',
+        `${SUPABASE_URL}/rest/v1/rpc/reiniciar_simulacion`,
 
-        headers,
+        {
 
-        body: JSON.stringify({
-          p_slug: SESSION_SLUG
-        })
-      }
-    );
+          method: 'POST',
+
+          headers,
+
+          body:
+            JSON.stringify({
+
+              p_slug:
+                SESSION_SLUG
+            })
+        }
+      );
 
 
     if (!response.ok) {
 
       const texto =
         await response.text();
-
-
-      console.error(
-        'Error RPC:',
-        response.status,
-        texto
-      );
 
 
       let detalle =
@@ -456,51 +605,71 @@ async function reiniciarPractica() {
           const json =
             JSON.parse(texto);
 
+
           detalle =
             json.message ||
             json.details ||
             detalle;
 
-        } catch {
+        }
 
-          detalle = texto;
+        catch {
+
+          detalle =
+            texto;
         }
       }
 
 
-      throw new Error(detalle);
+      throw new Error(
+        detalle
+      );
     }
 
-
-    /*
-      La función SQL devuelve un integer.
-      Ejemplo: 11
-    */
 
     const texto =
       await response.text();
 
 
-    const eliminados =
-      texto
-        ? Number(JSON.parse(texto))
-        : 0;
+    let eliminados = 0;
+
+
+    if (texto) {
+
+      try {
+
+        eliminados =
+          Number(
+            JSON.parse(texto)
+          );
+
+      }
+
+      catch {
+
+        eliminados = 0;
+      }
+    }
 
 
     mostrarMensajePanel(
+
       `Práctica reiniciada correctamente. ` +
+
       `Se eliminaron ${eliminados} registros.`,
+
       'ok'
     );
 
 
     await cargarDatos();
 
+  }
 
-  } catch (error) {
+  catch (error) {
 
     console.error(
-      'Error reiniciando práctica:',
+      'Error reiniciando:',
       error
     );
 
@@ -513,12 +682,15 @@ async function reiniciarPractica() {
 
 
     window.alert(
+
       'No fue posible reiniciar la práctica.\n\n' +
+
       (error.message || '')
     );
 
+  }
 
-  } finally {
+  finally {
 
     if (btnReiniciar) {
 
@@ -554,7 +726,7 @@ if (btnReiniciar) {
 
 
 /* =========================================================
-   CARGA INICIAL
+   INICIO
 ========================================================= */
 
 cargarDatos();
@@ -563,8 +735,7 @@ cargarDatos();
 /* =========================================================
    ACTUALIZACIÓN AUTOMÁTICA
 
-   Cada 5 segundos el profesor verá nuevos registros
-   sin necesidad de presionar Actualizar.
+   Cada 5 segundos.
 ========================================================= */
 
 setInterval(
