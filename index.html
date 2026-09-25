@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Actividad académica | Semana 3</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<main class="shell">
+  <section class="card hero">
+    <div class="brand"><div class="mark">IA</div><div><strong>Informática Aplicada</strong><span>Actividad académica · Semana 3</span></div></div>
+    <div id="formView">
+      <span class="eyebrow">Registro de participación</span>
+      <h1>Confirma tu participación</h1>
+      <p class="lead">Completa los datos solicitados para registrar esta actividad de clase.</p>
+      <div class="notice">Utiliza únicamente el <strong>código ficticio asignado por el docente</strong>. No ingreses nombre, correo, contraseña, teléfono ni otra información personal.</div>
+      <form id="registroForm">
+        <label>Código de práctica<input id="codigo" maxlength="12" required placeholder="Ej. A07" autocomplete="off"></label>
+        <label>Carrera<select id="carrera" required><option value="">Selecciona una opción</option><option>Dirección / Gerencia de Negocios</option><option>Marketing</option><option>Relaciones Internacionales</option><option>Negocios</option><option>Informática Administrativa</option><option>Otra</option></select></label>
+        <button id="btnEnviar" type="submit">Registrar participación</button>
+        <p id="msg" class="msg" aria-live="polite"></p>
+      </form>
+    </div>
+    <div id="closedView" class="hidden reveal">
+      <span class="shield">✓</span><h1>Actividad finalizada</h1>
+      <p>La sesión ya no está recibiendo registros. Espera las indicaciones del docente.</p>
+    </div>
+  </section>
+  <footer>Laboratorio educativo de ciberseguridad · Datos ficticios únicamente</footer>
+</main>
+<script type="module" src="js/estudiante.js"></script>
+</body></html>

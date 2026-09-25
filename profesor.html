@@ -1,0 +1,9 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Panel docente | Semana 3</title><link rel="stylesheet" href="css/styles.css"></head>
+<body><main class="dashboard">
+<header class="dash-head"><div><span class="eyebrow">Panel docente</span><h1>Simulación · Semana 3</h1><p>Resultados agregados de la práctica controlada.</p></div><a class="secondary" href="index.html" target="_blank">Abrir vista estudiante ↗</a></header>
+<section class="metrics"><article><span>Estado</span><strong id="estado">—</strong></article><article><span>Participaciones</span><strong id="total">0</strong></article><article><span>Última actualización</span><strong id="actualizacion">—</strong></article></section>
+<section class="panel"><div class="panel-title"><div><h2>Participación por carrera</h2><p>Solo se muestran datos ficticios de esta sesión.</p></div><button id="actualizar" class="secondary">Actualizar</button></div><div id="carreras" class="bars"></div></section>
+<section class="panel"><div class="panel-title"><div><h2>Registros recientes</h2><p>Código ficticio, carrera y hora.</p></div></div><div class="table-wrap"><table><thead><tr><th>Código</th><th>Carrera</th><th>Hora</th></tr></thead><tbody id="filas"></tbody></table></div></section>
+<section class="panel danger-zone"><h2>Revelación del ejercicio</h2><p>Cuando finalices los 3 minutos, cambia <code>activa</code> a <code>false</code> en la tabla <code>sesiones</code> de Supabase y proyecta este mensaje.</p><div class="reveal-box"><strong>⚠️ Simulación controlada de ingeniería social</strong><p>¿Qué verificaste antes de confiar? ¿Influyeron la autoridad, el contexto, la urgencia o el comportamiento del grupo?</p></div></section>
+<footer>Informática Aplicada · Laboratorio docente</footer>
+</main><script type="module" src="js/profesor.js"></script></body></html>
