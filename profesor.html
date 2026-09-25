@@ -1,9 +1,360 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Panel docente | Semana 3</title><link rel="stylesheet" href="css/styles.css"></head>
-<body><main class="dashboard">
-<header class="dash-head"><div><span class="eyebrow">Panel docente</span><h1>Simulación · Semana 3</h1><p>Resultados agregados de la práctica controlada.</p></div><a class="secondary" href="index.html" target="_blank">Abrir vista estudiante ↗</a></header>
-<section class="metrics"><article><span>Estado</span><strong id="estado">—</strong></article><article><span>Participaciones</span><strong id="total">0</strong></article><article><span>Última actualización</span><strong id="actualizacion">—</strong></article></section>
-<section class="panel"><div class="panel-title"><div><h2>Participación por carrera</h2><p>Solo se muestran datos ficticios de esta sesión.</p></div><button id="actualizar" class="secondary">Actualizar</button></div><div id="carreras" class="bars"></div></section>
-<section class="panel"><div class="panel-title"><div><h2>Registros recientes</h2><p>Código ficticio, carrera y hora.</p></div></div><div class="table-wrap"><table><thead><tr><th>Código</th><th>Carrera</th><th>Hora</th></tr></thead><tbody id="filas"></tbody></table></div></section>
-<section class="panel danger-zone"><h2>Revelación del ejercicio</h2><p>Cuando finalices los 3 minutos, cambia <code>activa</code> a <code>false</code> en la tabla <code>sesiones</code> de Supabase y proyecta este mensaje.</p><div class="reveal-box"><strong>⚠️ Simulación controlada de ingeniería social</strong><p>¿Qué verificaste antes de confiar? ¿Influyeron la autoridad, el contexto, la urgencia o el comportamiento del grupo?</p></div></section>
-<footer>Informática Aplicada · Laboratorio docente</footer>
-</main><script type="module" src="js/profesor.js"></script></body></html>
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <title>
+        Panel docente | Semana 3
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="css/styles.css"
+    >
+</head>
+
+<body>
+
+<main class="dashboard">
+
+    <!-- =========================================
+         ENCABEZADO
+    ========================================== -->
+
+    <header class="dash-head">
+
+        <div>
+
+            <span class="eyebrow">
+                Panel docente
+            </span>
+
+            <h1>
+                Simulación · Semana 3
+            </h1>
+
+            <p>
+                Centro de control de la actividad académica.
+            </p>
+
+        </div>
+
+        <a
+            class="secondary"
+            href="index.html"
+            target="_blank"
+        >
+            Abrir vista estudiante ↗
+        </a>
+
+    </header>
+
+
+    <!-- =========================================
+         MÉTRICAS
+    ========================================== -->
+
+    <section class="metrics">
+
+        <article>
+
+            <span>
+                Estado
+            </span>
+
+            <strong id="estado">
+                —
+            </strong>
+
+        </article>
+
+
+        <article>
+
+            <span>
+                Participaciones
+            </span>
+
+            <strong id="total">
+                0
+            </strong>
+
+        </article>
+
+
+        <article>
+
+            <span>
+                Última actualización
+            </span>
+
+            <strong id="actualizacion">
+                —
+            </strong>
+
+        </article>
+
+    </section>
+
+
+    <!-- =========================================
+         CONTROL DE LA PRÁCTICA
+    ========================================== -->
+
+    <section class="panel">
+
+        <div class="panel-title">
+
+            <div>
+
+                <span class="eyebrow">
+                    Control docente
+                </span>
+
+                <h2>
+                    Administración de la práctica
+                </h2>
+
+                <p>
+                    Desde aquí puedes actualizar los resultados
+                    o limpiar los registros antes de iniciar
+                    una nueva simulación.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="acciones-panel">
+
+            <button
+                id="actualizar"
+                class="secondary"
+                type="button"
+            >
+                ↻ Actualizar resultados
+            </button>
+
+
+            <button
+                id="btnReiniciar"
+                class="btn-danger"
+                type="button"
+            >
+                🗑 Reiniciar práctica
+            </button>
+
+        </div>
+
+
+        <div
+            id="mensajePanel"
+            class="mensaje-panel"
+        ></div>
+
+    </section>
+
+
+    <!-- =========================================
+         PARTICIPACIÓN POR CARRERA
+    ========================================== -->
+
+    <section class="panel">
+
+        <div class="panel-title">
+
+            <div>
+
+                <h2>
+                    Participación por carrera
+                </h2>
+
+                <p>
+                    Distribución de los registros recibidos
+                    durante la sesión actual.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="carreras"
+            class="bars"
+        ></div>
+
+    </section>
+
+
+    <!-- =========================================
+         REGISTROS RECIENTES
+    ========================================== -->
+
+    <section class="panel">
+
+        <div class="panel-title">
+
+            <div>
+
+                <h2>
+                    Registros recientes
+                </h2>
+
+                <p>
+                    Código de práctica, carrera y hora
+                    de participación.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Código
+                        </th>
+
+                        <th>
+                            Carrera
+                        </th>
+
+                        <th>
+                            Hora
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="filas">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================
+         REVELACIÓN DEL EJERCICIO
+    ========================================== -->
+
+    <section class="panel danger-zone">
+
+        <span class="eyebrow">
+            Cierre de la actividad
+        </span>
+
+        <h2>
+            Revelación del ejercicio
+        </h2>
+
+        <p>
+            Esta sección debe proyectarse únicamente
+            después de finalizar la participación.
+        </p>
+
+
+        <div class="reveal-box">
+
+            <strong>
+                ⚠️ Simulación controlada de ingeniería social
+            </strong>
+
+            <p>
+                El registro que acabamos de realizar formaba
+                parte de una demostración académica.
+            </p>
+
+            <p>
+                La actividad no buscaba obtener información
+                personal, sino observar cómo el contexto,
+                la autoridad y la confianza pueden influir
+                en nuestras decisiones digitales.
+            </p>
+
+            <hr>
+
+
+            <strong>
+                Preguntas para la clase
+            </strong>
+
+            <ul>
+
+                <li>
+                    ¿Qué verificaste antes de escanear
+                    el código QR?
+                </li>
+
+                <li>
+                    ¿Revisaste la dirección del sitio
+                    antes de continuar?
+                </li>
+
+                <li>
+                    ¿Por qué confiaste en la página?
+                </li>
+
+                <li>
+                    ¿Influyó que la instrucción
+                    viniera del docente?
+                </li>
+
+                <li>
+                    ¿Influyó que otros compañeros
+                    también estuvieran participando?
+                </li>
+
+                <li>
+                    ¿Qué habría cambiado si la página
+                    hubiera solicitado información sensible?
+                </li>
+
+            </ul>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================
+         PIE
+    ========================================== -->
+
+    <footer>
+
+        Informática Aplicada · Semana 3 · Panel docente
+
+    </footer>
+
+</main>
+
+
+<script
+    type="module"
+    src="js/profesor.js"
+></script>
+
+</body>
+
+</html>
